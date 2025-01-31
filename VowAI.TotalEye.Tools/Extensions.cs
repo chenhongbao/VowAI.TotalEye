@@ -1,4 +1,6 @@
-﻿namespace VowAI.TotalEye.Tools
+﻿using System.Text;
+
+namespace VowAI.TotalEye.Tools
 {
     public static class Extensions
     {
@@ -13,6 +15,19 @@
             }
 
             return defaultValue;
+        }
+
+        public static Exception Write<T>(this Exception exception, string? file = null, Encoding? encoding = null)
+        {
+            string path = Path.Combine(LocalComputer.GetApplicationDirectory<T>().FullName, $"{typeof(T).Name}.log");
+
+            using (TextWriter writer = new StreamWriter(path: path, append: true, encoding: encoding ?? Encoding.UTF8))
+            {
+                writer.WriteLine(DateTime.Now);
+                writer.WriteLine(exception);
+            }
+
+            return exception;
         }
     }
 }

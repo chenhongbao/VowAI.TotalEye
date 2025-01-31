@@ -1,6 +1,5 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
 using System.Windows.Forms;
 using VowAI.TotalEye.Tools;
 
@@ -74,7 +73,7 @@ namespace VowAI.TotalEye.CatchScreen
                     ".jpg" or  "jpeg" => ImageFormat.Jpeg,
                     ".bmp" => ImageFormat.Bmp,
                     ".png" => ImageFormat.Png,
-                    _ => throw new ArgumentException($"非法图像格式：{extension}。"),
+                    _ => throw new ArgumentException($"Illegal image format {extension}."),
                 };
             }
         }
