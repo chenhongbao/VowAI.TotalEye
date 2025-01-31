@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "VowAI.TotalEye.CatchScreen": {
+      "commandName": "Project",
+      "commandLineArgs": "/Destination:screen_print.jpg"
+    }
+  }
+}

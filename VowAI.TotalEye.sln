@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35707.178
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VowAI.TotalEye.Client", "VowAI.TotalEye.Client\VowAI.TotalEye.Client.csproj", "{922C5FE2-DAF8-450A-B432-316C716372E9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VowAI.TotalEye.CatchScreen", "VowAI.TotalEye.CatchScreen\VowAI.TotalEye.CatchScreen.csproj", "{C3335568-1102-4AD0-B894-C9266CC7F11D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VowAI.TotalEye.Tools", "VowAI.TotalEye.Tools\VowAI.TotalEye.Tools.csproj", "{81BD5943-5487-42E5-8DFA-956F57F6BA33}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{922C5FE2-DAF8-450A-B432-316C716372E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{922C5FE2-DAF8-450A-B432-316C716372E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{922C5FE2-DAF8-450A-B432-316C716372E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{922C5FE2-DAF8-450A-B432-316C716372E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3335568-1102-4AD0-B894-C9266CC7F11D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3335568-1102-4AD0-B894-C9266CC7F11D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3335568-1102-4AD0-B894-C9266CC7F11D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3335568-1102-4AD0-B894-C9266CC7F11D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81BD5943-5487-42E5-8DFA-956F57F6BA33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81BD5943-5487-42E5-8DFA-956F57F6BA33}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81BD5943-5487-42E5-8DFA-956F57F6BA33}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81BD5943-5487-42E5-8DFA-956F57F6BA33}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
