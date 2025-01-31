@@ -2,5 +2,6 @@
 {
     public interface IConfiguredHttpSniffer: IDisposable
     {
+        public string ReadActivityLogs();
     }
 }

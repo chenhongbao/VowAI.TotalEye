@@ -17,17 +17,27 @@ namespace VowAI.TotalEye.Tools
             return defaultValue;
         }
 
-        public static Exception Write<T>(this Exception exception, string? file = null, Encoding? encoding = null)
+        public static V WriteString<T, V>(this V content, string? file = null, Encoding? encoding = null)
         {
             string path = Path.Combine(LocalComputer.GetApplicationDirectory<T>().FullName, $"{typeof(T).Name}.log");
 
             using (TextWriter writer = new StreamWriter(path: path, append: true, encoding: encoding ?? Encoding.UTF8))
             {
                 writer.WriteLine(DateTime.Now);
-                writer.WriteLine(exception);
+                writer.WriteLine(content);
             }
 
-            return exception;
+            return content;
+        }
+
+        public static string WriteString<T>(this string content, string? file = null, Encoding? encoding = null)
+        {
+            return content.WriteString<T, string>(file, encoding);
+        }
+
+        public static Exception WriteString<T>(this Exception exception, string? file = null, Encoding? encoding = null)
+        {
+            return exception.WriteString<T, Exception>(file, encoding);
         }
     }
 }

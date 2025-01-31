@@ -2,7 +2,8 @@
 {
     public interface ICentrePollerConfiguration
     {
-        public string Url { get; }
+        public string LoginUrl { get; }
+        public string AskUrl { get; }
         public string UserName { get; }
         public string Password { get; }
         public string Pin { get; }

@@ -59,7 +59,7 @@ namespace VowAI.TotalEye.Client
             }
             catch (Exception exception)
             {
-                exception.Write<HttpSniffer>();
+                exception.WriteString<HttpSniffer>();
             }
         }
 
@@ -71,7 +71,7 @@ namespace VowAI.TotalEye.Client
             }
             catch (Exception exception)
             {
-                exception.Write<HttpSniffer>();
+                exception.WriteString<HttpSniffer>();
             }
         }
 
@@ -83,7 +83,7 @@ namespace VowAI.TotalEye.Client
             }
             catch (Exception exception)
             {
-                exception.Write<HttpSniffer>();
+                exception.WriteString<HttpSniffer>();
             }
         }
     }
