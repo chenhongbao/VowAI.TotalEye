@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Windows.Forms;
 using VowAI.TotalEye.Tools;
 
@@ -10,13 +11,23 @@ namespace VowAI.TotalEye.CatchScreen
     {
         static void Main(string[] args)
         {
-            using (Bitmap bmp = CaptureScreen())
+            try
             {
-                (string path, ImageFormat format) = GetDestination(args);
+                using (Bitmap bmp = CaptureScreen())
+                {
+                    (string path, ImageFormat format) = GetDestination(args);
 
-                bmp.Save(path, format);
+                    bmp.Save(path, format);
 
-                Console.WriteLine(new FileInfo(path).FullName);
+                    Console.WriteLine(new FileInfo(path).FullName);
+                    Console.Out.Flush();
+                }
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine("{{ERROR}}");
+                Console.WriteLine($"{exception.Message}");
+                Console.WriteLine($"{exception.StackTrace}");
                 Console.Out.Flush();
             }
         }
