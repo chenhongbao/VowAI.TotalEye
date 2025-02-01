@@ -1,5 +1,5 @@
 ﻿using System.Collections.Concurrent;
-using VowAI.TotalEye.Models;
+using VowAI.TotalEye.ServerShared.Models;
 
 namespace VowAI.TotalEye.Client
 {
@@ -7,7 +7,7 @@ namespace VowAI.TotalEye.Client
     {
         private readonly ConcurrentDictionary<string, ClientControlPolicy> _policies = new();
 
-        public IClientControlPolicy? GetPolicy(string tag)
+        public ClientControlPolicy? GetPolicy(string tag)
         {
             return _policies.TryGetValue(tag, out var policy) ? policy : null;
         }

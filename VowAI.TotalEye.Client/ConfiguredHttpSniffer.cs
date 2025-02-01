@@ -1,6 +1,6 @@
 ﻿using System.Text;
 using Titanium.Web.Proxy.EventArguments;
-using VowAI.TotalEye.Models;
+using VowAI.TotalEye.ServerShared.Models;
 using VowAI.TotalEye.Tools;
 
 namespace VowAI.TotalEye.Client
@@ -38,7 +38,7 @@ namespace VowAI.TotalEye.Client
 
         private void OnTunnelConnect(TunnelConnectSessionEventArgs args)
         {
-            IClientControlPolicy? policy = _policyProvider.GetPolicy("http_connect");
+            ClientControlPolicy? policy = _policyProvider.GetPolicy("http_connect");
 
             if (policy != null)
             {
@@ -48,7 +48,7 @@ namespace VowAI.TotalEye.Client
 
         private void OnRequest(SessionEventArgs args)
         {
-            IClientControlPolicy? policy = _policyProvider.GetPolicy("http_request");
+            ClientControlPolicy? policy = _policyProvider.GetPolicy("http_request");
 
             if (policy != null)
             {
@@ -60,7 +60,7 @@ namespace VowAI.TotalEye.Client
         {
             WriteActivityLog(args);
 
-            IClientControlPolicy? policy = _policyProvider.GetPolicy("http_response");
+            ClientControlPolicy? policy = _policyProvider.GetPolicy("http_response");
 
             if (policy != null)
             {
@@ -88,7 +88,7 @@ namespace VowAI.TotalEye.Client
             return $"{DateTime.Now}\t{args.HttpClient.Request.Method}\t{args.HttpClient.Request.RequestUri.Host}";
         }
 
-        private void ApplyConnectPolicy(TunnelConnectSessionEventArgs args, IClientControlPolicy policy)
+        private void ApplyConnectPolicy(TunnelConnectSessionEventArgs args, ClientControlPolicy policy)
         {
             if (policy.Policies != null && policy.Policies.Any())
             {
@@ -105,7 +105,7 @@ namespace VowAI.TotalEye.Client
             }
         }
 
-        private void ApplySessionPolicy(SessionEventArgs args, IClientControlPolicy policy)
+        private void ApplySessionPolicy(SessionEventArgs args, ClientControlPolicy policy)
         {
             if (policy.Policies != null && policy.Policies.Any())
             {
@@ -126,12 +126,12 @@ namespace VowAI.TotalEye.Client
         {
             switch (action.ToLower())
             {
-                case "redirect":
+                case "http_session_redirect":
 
                     args.Redirect(actionDescription);
                     break;
 
-                case "ok":
+                case "http_session_ok":
 
                     args.Ok(actionDescription);
                     break;
@@ -156,12 +156,12 @@ namespace VowAI.TotalEye.Client
         {
             switch (action.ToLower())
             {
-                case "deny":
+                case "http_connect_deny":
 
                     args.DenyConnect = true;
                     break;
 
-                case "ignore":
+                case "http_connect_ignore":
 
                     args.DecryptSsl = false;
                     break;

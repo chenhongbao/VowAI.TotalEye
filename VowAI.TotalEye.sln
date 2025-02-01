@@ -9,9 +9,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VowAI.TotalEye.CatchScreen"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VowAI.TotalEye.Tools", "VowAI.TotalEye.Tools\VowAI.TotalEye.Tools.csproj", "{81BD5943-5487-42E5-8DFA-956F57F6BA33}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VowAI.TotalEye.Models", "VowAI.TotalEye.Models\VowAI.TotalEye.Models.csproj", "{D728C5A7-B570-4B09-98CB-AE7DB40ACAFC}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VowAI.TotalEye.ClientShared", "VowAI.TotalEye.ClientShared\VowAI.TotalEye.ClientShared.csproj", "{A4BD3649-E96B-4C72-BD94-549AE02AA779}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VowAI.TotalEye.Server", "VowAI.TotalEye.Server\VowAI.TotalEye.Server.csproj", "{72727BDA-F2BA-40FE-BF02-84CFB7D7833F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VowAI.TotalEye.ServerShared", "VowAI.TotalEye.ServerShared\VowAI.TotalEye.ServerShared.csproj", "{8E5EE545-94EA-428A-8765-436C269BEA52}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,14 +33,18 @@ Global
 		{81BD5943-5487-42E5-8DFA-956F57F6BA33}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{81BD5943-5487-42E5-8DFA-956F57F6BA33}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{81BD5943-5487-42E5-8DFA-956F57F6BA33}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D728C5A7-B570-4B09-98CB-AE7DB40ACAFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D728C5A7-B570-4B09-98CB-AE7DB40ACAFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D728C5A7-B570-4B09-98CB-AE7DB40ACAFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D728C5A7-B570-4B09-98CB-AE7DB40ACAFC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A4BD3649-E96B-4C72-BD94-549AE02AA779}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A4BD3649-E96B-4C72-BD94-549AE02AA779}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A4BD3649-E96B-4C72-BD94-549AE02AA779}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A4BD3649-E96B-4C72-BD94-549AE02AA779}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72727BDA-F2BA-40FE-BF02-84CFB7D7833F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72727BDA-F2BA-40FE-BF02-84CFB7D7833F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72727BDA-F2BA-40FE-BF02-84CFB7D7833F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72727BDA-F2BA-40FE-BF02-84CFB7D7833F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E5EE545-94EA-428A-8765-436C269BEA52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E5EE545-94EA-428A-8765-436C269BEA52}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E5EE545-94EA-428A-8765-436C269BEA52}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E5EE545-94EA-428A-8765-436C269BEA52}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

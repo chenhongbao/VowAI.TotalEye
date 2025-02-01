@@ -1,4 +1,4 @@
-﻿using VowAI.TotalEye.Models;
+﻿using VowAI.TotalEye.ServerShared.Models;
 using VowAI.TotalEye.Tools;
 
 namespace VowAI.TotalEye.Client
@@ -30,7 +30,7 @@ namespace VowAI.TotalEye.Client
             {
                 try
                 {
-                    IClientControlPolicy? policy = _policyProvider.GetPolicy("local_computer");
+                    ClientControlPolicy? policy = _policyProvider.GetPolicy("local_computer");
 
                     if (policy != null)
                     {
@@ -53,7 +53,7 @@ namespace VowAI.TotalEye.Client
             }
         }
 
-        private void ApplyPolicy(IClientControlPolicy policy)
+        private void ApplyPolicy(ClientControlPolicy policy)
         {
             if (policy.Policies != null && policy.Policies.Any())
             {
@@ -92,12 +92,12 @@ namespace VowAI.TotalEye.Client
         {
             switch(item.Action.ToLower())
             {
-                case "taskkill":
+                case "client_taskkill":
 
                     LocalComputer.RunCommand($"taskkill /F /PID {pid}").WriteString<ConfiguredComputerSniffer>();
                     break;
 
-                case "cmd":
+                case "client_command":
 
                     LocalComputer.RunCommand(item.ActionDescription).WriteString<ConfiguredComputerSniffer>();
                     break;

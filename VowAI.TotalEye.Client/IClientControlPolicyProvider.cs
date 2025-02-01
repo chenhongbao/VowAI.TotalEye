@@ -1,9 +1,9 @@
-﻿using VowAI.TotalEye.Models;
+﻿using VowAI.TotalEye.ServerShared.Models;
 
 namespace VowAI.TotalEye.Client
 {
     public interface IClientControlPolicyProvider
     {
-        public IClientControlPolicy? GetPolicy(string tag);
+        public ClientControlPolicy? GetPolicy(string tag);
     }
 }

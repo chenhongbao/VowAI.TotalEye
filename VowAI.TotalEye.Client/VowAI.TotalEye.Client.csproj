@@ -18,7 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\VowAI.TotalEye.ClientShared\VowAI.TotalEye.ClientShared.csproj" />
-    <ProjectReference Include="..\VowAI.TotalEye.Models\VowAI.TotalEye.Models.csproj" />
+    <ProjectReference Include="..\VowAI.TotalEye.ServerShared\VowAI.TotalEye.ServerShared.csproj" />
     <ProjectReference Include="..\VowAI.TotalEye.Tools\VowAI.TotalEye.Tools.csproj" />
   </ItemGroup>
 

