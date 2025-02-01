@@ -1,6 +1,0 @@
-@VowAI.TotalEye.Server_HostAddress = http://localhost:5003
-
-GET {{VowAI.TotalEye.Server_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
