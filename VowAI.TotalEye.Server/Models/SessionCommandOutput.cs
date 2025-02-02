@@ -1,9 +1,9 @@
 ﻿namespace VowAI.TotalEye.Server.Models
 {
-    public class UserCommandOutput
+    public class SessionCommandOutput
     {
         public int CommandOuputId { get; set; }
         public string? CommandOutput { get; set; }
-        public User? User { get; set; }
+        public UserInfoSession? Session { get; set; }
     }
 }

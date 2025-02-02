@@ -35,7 +35,7 @@ namespace VowAI.TotalEye.Client
 
                     if (policySet != null)
                     {
-                        ApplyPolicy(policySet);
+                        ApplyPolicySet(policySet);
                     }
                 }
                 catch (Exception exception)
@@ -54,44 +54,44 @@ namespace VowAI.TotalEye.Client
             }
         }
 
-        private void ApplyPolicy(ClientControlPolicySet policySet)
+        private void ApplyPolicySet(ClientControlPolicySet policySet)
         {
             if (policySet.Policies.Any())
             {
                 string[] processes = LocalComputer.RunCommand("tasklist /FO Table /NH").Split('\n');
 
-                foreach (ClientControlPolicyItem item in policySet.GetPolicyItems())
+                foreach (ClientControlPolicy policy in policySet.Policies)
                 {
-                    ApplyPolicyItem(item, processes);
+                    ApplyPolicy(policy, processes);
                 }
             }
         }
 
-        private void ApplyPolicyItem(ClientControlPolicyItem item, string[] processes)
+        private void ApplyPolicy(ClientControlPolicy policy, string[] processes)
         {
             foreach (string process in processes)
             {
-                ApplyPolicyProcess(item, process);
+                ApplyPolicyProcess(policy, process);
             }
         }
 
-        private void ApplyPolicyProcess(ClientControlPolicyItem item, string process)
+        private void ApplyPolicyProcess(ClientControlPolicy policy, string process)
         {
             List<string> cells = process.Split(' ').ToList();
             cells.RemoveAll(x => string.IsNullOrEmpty(x) || string.IsNullOrWhiteSpace(x));
 
             if (cells.Count > 1)
             {
-                if (item.FilterWords.Split([';', ',']).Any(word => ApplyCondition(item.FilterCondition, cells[0], word)))
+                if (policy.FilterWords.Split([';', ',']).Any(word => ApplyCondition(policy.FilterCondition, cells[0], word)))
                 {
-                    ApplyProcessAction(item, cells[1]);
+                    ApplyProcessAction(policy, cells[1]);
                 }
             }
         }
 
-        private void ApplyProcessAction(ClientControlPolicyItem item, string pid)
+        private void ApplyProcessAction(ClientControlPolicy policy, string pid)
         {
-            switch (item.Action.ToLower())
+            switch (policy.Action.ToLower())
             {
                 case "client_taskkill":
 
@@ -100,7 +100,7 @@ namespace VowAI.TotalEye.Client
 
                 case "client_command":
 
-                    LocalComputer.RunCommand(item.ActionDescription).WriteString<ConfiguredComputerSniffer>();
+                    LocalComputer.RunCommand(policy.ActionDescription).WriteString<ConfiguredComputerSniffer>();
                     break;
             }
         }

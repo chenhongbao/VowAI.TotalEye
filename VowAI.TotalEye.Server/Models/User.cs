@@ -14,6 +14,7 @@
         public string? Organization { get; set; }
         public DateTime RegisterTime { get; set; }
         public ImageItem? Image { get; set; }
+        public ICollection<UserInfoRequest>? Requests { get; set; }
         public ICollection<UserInfoSession>? Sessions { get; set; }
         public ICollection<ControlPolicy>? Policies { get; set; }
     }

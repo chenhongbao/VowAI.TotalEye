@@ -97,7 +97,7 @@ namespace VowAI.TotalEye.Client
 
         private async Task<ClientInfoRequest?> Ask(HttpClient client)
         {
-            HttpResponseMessage response = await client.PostAsJsonAsync(_configuration.AskUrl, new ClientUser { UserId = _configuration.UserId, Pin = _configuration.Pin });
+            HttpResponseMessage response = await client.PostAsJsonAsync(_configuration.GetInfoRequestUrl, new ClientUser { UserId = _configuration.UserId, Pin = _configuration.Pin });
 
             if (response.IsSuccessStatusCode == false)
             {
@@ -123,10 +123,21 @@ namespace VowAI.TotalEye.Client
 
                     return await UploadHttpLogs(client, request);
 
+                case "":
+
+                    return await GetControlPolicySet();
+
                 default:
 
                     throw new ArgumentException($"Unknown request from centre '{request.Name}'.");
             }
+        }
+
+        private async Task<ClientControlPolicySet?> GetControlPolicySet()
+        {
+            string url = _configuration.GetPolicyUrl + "?userId=" + _configuration.UserId + "&pin=" + _configuration.Pin;
+
+            return await _clientFactory.CreateClient().GetFromJsonAsync<ClientControlPolicySet>(url);
         }
 
         private async Task<ClientControlPolicySet?> UploadImageFromPath(HttpClient client, ClientInfoRequest request)
@@ -138,7 +149,7 @@ namespace VowAI.TotalEye.Client
 
         private async Task<ClientControlPolicySet?> UploadHttpLogs(HttpClient client, ClientInfoRequest request)
         {
-            return await UploadText(client, request, JsonSerializer.Serialize(_httpSniffer.ReadHttpLogs()));
+            return await UploadText(client, request, _httpSniffer.ReadHttpLogs());
         }
 
         private async Task<ClientControlPolicySet?> UploadCommandOutput(HttpClient client, ClientInfoRequest request)

@@ -13,16 +13,18 @@ namespace VowAI.TotalEye.Client
             builder.Services.AddSingleton<IServerPollerConfiguration>(
                 new ServerPollerConfiguration().Load((config, loaded) =>
                 {
-                    config.LoginUrl = loaded.LoginUrl;
-                    config.AskUrl = loaded.AskUrl;
+                    config.UserLoginUrl = loaded.UserLoginUrl;
+                    config.GetInfoRequestUrl = loaded.GetInfoRequestUrl;
+                    config.GetPolicyUrl = loaded.GetPolicyUrl;
                     config.UserId = loaded.UserId;
                     config.Password = loaded.Password;
                     config.Pin = loaded.Pin;
 
                 }, (config) =>
                 {
-                    config.LoginUrl = "http://plusai.site/Login";
-                    config.AskUrl = "http://plusai.site/Ask";
+                    config.UserLoginUrl = "http://plusai.site/UserLogin";
+                    config.GetInfoRequestUrl = "http://plusai.site/GetInfoRequest";
+                    config.GetPolicyUrl = "http://plusai.site/GetControlPolicy";
                     config.UserId = 0;
                     config.Password = "";
                     config.Pin = "";
@@ -48,7 +50,7 @@ namespace VowAI.TotalEye.Client
                 }, (config) =>
                 {
                     config.Version = 0;
-                    config.VersionUrl = "http://plusai.site/Version";
+                    config.VersionUrl = "http://plusai.site/GetLastestVersion";
                     config.FileUrl = "";
                 }));
 

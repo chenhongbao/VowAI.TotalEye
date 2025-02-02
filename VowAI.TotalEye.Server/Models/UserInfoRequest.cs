@@ -1,4 +1,6 @@
-﻿namespace VowAI.TotalEye.Server.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace VowAI.TotalEye.Server.Models
 {
     public class UserInfoRequest
     {
@@ -7,6 +9,7 @@
         public string? Description { get; set; }
         public string? Token { get; set; }
         public string? ReplyUrl { get; set; }
+        public string? Status { get; set; }
         public User? User { get; set; }
     }
 }

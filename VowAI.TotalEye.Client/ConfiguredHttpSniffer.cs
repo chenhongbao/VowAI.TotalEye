@@ -1,6 +1,5 @@
 ﻿using System.Text;
 using Titanium.Web.Proxy.EventArguments;
-using VowAI.TotalEye.ServerShared;
 using VowAI.TotalEye.ServerShared.Models;
 using VowAI.TotalEye.Tools;
 
@@ -26,11 +25,11 @@ namespace VowAI.TotalEye.Client
             _httpSniffer.Dispose();
         }
 
-        public ClientHttpLogs ReadHttpLogs()
+        public string ReadHttpLogs()
         {
             DirectoryInfo directory = LocalComputer.GetApplicationDirectory<ConfiguredHttpSniffer>();
             string path = Path.Combine(directory.FullName, LOG_FILE);
-            ClientHttpLogs logs = ReadHttpLogsFile(path);
+            string logs = File.ReadAllText(path, Encoding.UTF8);
 
             File.WriteAllText(path, "");
 
@@ -69,12 +68,6 @@ namespace VowAI.TotalEye.Client
             }
         }
 
-        private ClientHttpLogs ReadHttpLogsFile(string path)
-        {
-            //TODO Read client's HTTP logs.
-            throw new NotImplementedException();
-        }
-
         private void WriteHttpLog(SessionEventArgs args)
         {
             DirectoryInfo directory = LocalComputer.GetApplicationDirectory<ConfiguredHttpSniffer>();
@@ -101,11 +94,11 @@ namespace VowAI.TotalEye.Client
             {
                 string hostName = args.HttpClient.Request.RequestUri.Host;
 
-                foreach (ClientControlPolicyItem policyItem in policySet.GetPolicyItems())
+                foreach (ClientControlPolicy policy in policySet.Policies)
                 {
-                    if (policyItem.FilterWords.Split([';', ',']).Any(word => ApplyCondition(policyItem.FilterCondition, hostName, word)))
+                    if (policy.FilterWords.Split([';', ',']).Any(word => ApplyCondition(policy.FilterCondition, hostName, word)))
                     {
-                        ApplyConnectAction(args, policyItem.Action, policyItem.ActionDescription);
+                        ApplyConnectAction(args, policy.Action, policy.ActionDescription);
                         break;
                     }
                 }
@@ -118,11 +111,11 @@ namespace VowAI.TotalEye.Client
             {
                 string hostname = args.HttpClient.Request.RequestUri.Host;
 
-                foreach (ClientControlPolicyItem policyItem in policySet.GetPolicyItems())
+                foreach (ClientControlPolicy policy in policySet.Policies)
                 {
-                    if (policyItem.FilterWords.Split([';', ',']).Any(word => ApplyCondition(policyItem.FilterCondition, hostname, word)))
+                    if (policy.FilterWords.Split([';', ',']).Any(word => ApplyCondition(policy.FilterCondition, hostname, word)))
                     {
-                        ApplySessionAction(args, policyItem.Action, policyItem.ActionDescription);
+                        ApplySessionAction(args, policy.Action, policy.ActionDescription);
                         break;
                     }
                 }
@@ -141,6 +134,9 @@ namespace VowAI.TotalEye.Client
                 case "http_session_ok":
 
                     args.Ok(actionDescription);
+                    break;
+
+                case "":
                     break;
 
                 default:
@@ -171,6 +167,9 @@ namespace VowAI.TotalEye.Client
                 case "http_connect_ignore":
 
                     args.DecryptSsl = false;
+                    break;
+
+                case "":
                     break;
 
                 default:
