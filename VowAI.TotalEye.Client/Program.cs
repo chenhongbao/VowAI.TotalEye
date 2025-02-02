@@ -10,8 +10,8 @@ namespace VowAI.TotalEye.Client
         {
             HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
 
-            builder.Services.AddSingleton<ICentrePollerConfiguration>(
-                new CentrePollerConfiguration().Load((config, loaded) =>
+            builder.Services.AddSingleton<IServerPollerConfiguration>(
+                new ServerPollerConfiguration().Load((config, loaded) =>
                 {
                     config.LoginUrl = loaded.LoginUrl;
                     config.AskUrl = loaded.AskUrl;
@@ -54,7 +54,7 @@ namespace VowAI.TotalEye.Client
 
             builder.Services.AddSingleton<IClientControlPolicyProvider, ClientControlPolicyProvider>();
 
-            builder.Services.AddSingleton<CentrePoller>();
+            builder.Services.AddSingleton<ServerPoller>();
             builder.Services.AddTransient<ConfiguredHttpSniffer>();
             builder.Services.AddTransient<ConfiguredComputerSniffer>();
 
@@ -62,7 +62,7 @@ namespace VowAI.TotalEye.Client
 
             IHost host = builder.Build();
 
-            using (_ = host.Services.GetRequiredService<CentrePoller>())
+            using (_ = host.Services.GetRequiredService<ServerPoller>())
             {
                 host.Run();
             }

@@ -1,6 +1,6 @@
 ﻿namespace VowAI.TotalEye.Client
 {
-    public class CentrePollerConfiguration : ICentrePollerConfiguration
+    public class ServerPollerConfiguration : IServerPollerConfiguration
     {
         public string LoginUrl { get; set; }
         public string AskUrl { get; set; }

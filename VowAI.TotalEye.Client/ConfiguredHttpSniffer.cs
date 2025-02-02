@@ -25,15 +25,15 @@ namespace VowAI.TotalEye.Client
             _httpSniffer.Dispose();
         }
 
-        public string ReadActivityLogs()
+        public ClientHttpLogs ReadHttpLogs()
         {
             DirectoryInfo directory = LocalComputer.GetApplicationDirectory<ConfiguredHttpSniffer>();
-            string path = Path.Combine(directory.FullName, LOG_FILE);
-            string text = File.ReadAllText(path, Encoding.UTF8);
+            string path = Path.Combine(directory.FullName, LOG_FILE);        
+            ClientHttpLogs logs = ReadHttpLogsFile(path);
 
             File.WriteAllText(path, "");
 
-            return text;
+            return logs;
         }
 
         private void OnTunnelConnect(TunnelConnectSessionEventArgs args)
@@ -58,7 +58,7 @@ namespace VowAI.TotalEye.Client
 
         private void OnResponse(SessionEventArgs args)
         {
-            WriteActivityLog(args);
+            WriteHttpLog(args);
 
             ClientControlPolicy? policy = _policyProvider.GetPolicy("http_response");
 
@@ -68,7 +68,12 @@ namespace VowAI.TotalEye.Client
             }
         }
 
-        private void WriteActivityLog(SessionEventArgs args)
+        private ClientHttpLogs ReadHttpLogsFile(string path)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void WriteHttpLog(SessionEventArgs args)
         {
             DirectoryInfo directory = LocalComputer.GetApplicationDirectory<ConfiguredHttpSniffer>();
             string path = Path.Combine(directory.FullName, LOG_FILE);

@@ -1,7 +1,9 @@
-﻿namespace VowAI.TotalEye.Client
+﻿using VowAI.TotalEye.ServerShared.Models;
+
+namespace VowAI.TotalEye.Client
 {
     public interface IConfiguredHttpSniffer: IDisposable
     {
-        public string ReadActivityLogs();
+        public ClientHttpLogs ReadHttpLogs();
     }
 }

@@ -39,7 +39,7 @@ namespace VowAI.TotalEye.Client
                 }
                 catch (Exception exception)
                 {
-                    exception.WriteString<CentrePoller>();
+                    exception.WriteString<ServerPoller>();
                 }
 
                 try
@@ -48,7 +48,7 @@ namespace VowAI.TotalEye.Client
                 }
                 catch (Exception exception)
                 {
-                    exception.WriteString<CentrePoller>();
+                    exception.WriteString<ServerPoller>();
                 }
             }
         }
