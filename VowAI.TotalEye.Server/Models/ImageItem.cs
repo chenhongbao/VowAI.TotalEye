@@ -3,8 +3,7 @@
     public class ImageItem
     {
         public int ImageId { get; set; }
-        public string FileName { get; set; }
-        public byte[] Data { get; set; }
-        public User User { get; set; }
+        public string? FileName { get; set; }
+        public byte[]? Data { get; set; }
     }
 }

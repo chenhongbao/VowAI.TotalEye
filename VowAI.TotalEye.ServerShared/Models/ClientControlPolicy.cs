@@ -5,7 +5,6 @@
         public int PolicyId { get; set; }
         public int Description { get; set; }
         public string Tag { get; set; }
-
-        public ICollection<ControlPolicyItem> Policies { get; set; }
+        public ICollection<ClientControlPolicyItem> Policies { get; set; }
     }
 }

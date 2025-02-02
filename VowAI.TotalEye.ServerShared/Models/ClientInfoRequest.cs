@@ -1,6 +1,6 @@
 ﻿namespace VowAI.TotalEye.ServerShared.Models
 {
-    public class ServerInfoRequest
+    public class ClientInfoRequest
     {
         public int RequestId { get; set; }
         public string Name { get; set; }

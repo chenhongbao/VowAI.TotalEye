@@ -59,14 +59,14 @@ namespace VowAI.TotalEye.Client
             {
                 string[] processes = LocalComputer.RunCommand("tasklist /FO Table /NH").Split('\n');
 
-                foreach (ControlPolicyItem item in policy.Policies)
+                foreach (ClientControlPolicyItem item in policy.Policies)
                 {
                     ApplyPolicyItem(item, processes);
                 }
             }
         }
 
-        private void ApplyPolicyItem(ControlPolicyItem item, string[] processes)
+        private void ApplyPolicyItem(ClientControlPolicyItem item, string[] processes)
         {
             foreach (string process in processes)
             {
@@ -74,7 +74,7 @@ namespace VowAI.TotalEye.Client
             }
         }
 
-        private void ApplyPolicyProcess(ControlPolicyItem item, string process)
+        private void ApplyPolicyProcess(ClientControlPolicyItem item, string process)
         {
             List<string> cells = process.Split(' ').ToList();
             cells.RemoveAll(x => string.IsNullOrEmpty(x) || string.IsNullOrWhiteSpace(x));
@@ -88,7 +88,7 @@ namespace VowAI.TotalEye.Client
             }
         }
 
-        private void ApplyProcessAction(ControlPolicyItem item, string pid)
+        private void ApplyProcessAction(ClientControlPolicyItem item, string pid)
         {
             switch(item.Action.ToLower())
             {

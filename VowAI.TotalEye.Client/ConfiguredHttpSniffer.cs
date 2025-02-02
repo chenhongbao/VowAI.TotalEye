@@ -70,6 +70,7 @@ namespace VowAI.TotalEye.Client
 
         private ClientHttpLogs ReadHttpLogsFile(string path)
         {
+            //TODO Read client's HTTP logs.
             throw new NotImplementedException();
         }
 
@@ -99,7 +100,7 @@ namespace VowAI.TotalEye.Client
             {
                 string hostname = args.HttpClient.Request.RequestUri.Host;
 
-                foreach (ControlPolicyItem policyItem in policy.Policies)
+                foreach (ClientControlPolicyItem policyItem in policy.Policies)
                 {
                     if (policyItem.FilterWords.Split([';', ',']).Any(word => ApplyCondition(policyItem.FilterCondition, hostname, word)))
                     {
@@ -116,7 +117,7 @@ namespace VowAI.TotalEye.Client
             {
                 string hostname = args.HttpClient.Request.RequestUri.Host;
 
-                foreach (ControlPolicyItem policyItem in policy.Policies)
+                foreach (ClientControlPolicyItem policyItem in policy.Policies)
                 {
                     if (policyItem.FilterWords.Split([';', ',']).Any(word => ApplyCondition(policyItem.FilterCondition, hostname, word)))
                     {

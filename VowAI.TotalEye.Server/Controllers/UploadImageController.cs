@@ -35,7 +35,6 @@ namespace VowAI.TotalEye.Server.Controllers
             ImageItem imageItem = new ImageItem
             {
                 FileName = payload.FileName,
-                Timestamp = DateTime.Now,
                 Data = new byte[payload.Length],
             };
 
