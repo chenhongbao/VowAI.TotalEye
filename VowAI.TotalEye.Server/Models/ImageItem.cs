@@ -4,8 +4,7 @@
     {
         public int ImageId { get; set; }
         public string FileName { get; set; }
-        public string Description { get; set; }
         public byte[] Data { get; set; }
-        public DateTime Timestamp { get; set; }
+        public User User { get; set; }
     }
 }
