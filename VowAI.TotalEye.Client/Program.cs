@@ -15,7 +15,7 @@ namespace VowAI.TotalEye.Client
                 {
                     config.LoginUrl = loaded.LoginUrl;
                     config.AskUrl = loaded.AskUrl;
-                    config.UserName = loaded.UserName;
+                    config.UserId = loaded.UserId;
                     config.Password = loaded.Password;
                     config.Pin = loaded.Pin;
 
@@ -23,7 +23,7 @@ namespace VowAI.TotalEye.Client
                 {
                     config.LoginUrl = "http://plusai.site/Login";
                     config.AskUrl = "http://plusai.site/Ask";
-                    config.UserName = "";
+                    config.UserId = 0;
                     config.Password = "";
                     config.Pin = "";
                 }));

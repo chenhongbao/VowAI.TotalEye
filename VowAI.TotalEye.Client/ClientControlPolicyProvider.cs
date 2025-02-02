@@ -5,28 +5,28 @@ namespace VowAI.TotalEye.Client
 {
     public class ClientControlPolicyProvider : IClientControlPolicyProvider
     {
-        private readonly ConcurrentDictionary<string, ClientControlPolicy> _policies = new();
+        private readonly ConcurrentBag<ClientControlPolicy> _policies = new();
 
-        public ClientControlPolicy? GetPolicy(string tag)
+        public ClientControlPolicySet? GetPolicy(string tag)
         {
-            return _policies.TryGetValue(tag, out var policy) ? policy : null;
+            ClientControlPolicySet policySet = new()
+            {
+                Policies = new List<ClientControlPolicy>()
+            };
+
+            foreach (var policy in _policies)
+            {
+                if (policy.Tag == tag)
+                {
+                    policySet.Policies.Add(policy);
+                }
+            }
+            return policySet;
         }
 
-        public ClientControlPolicy? SetPolicy(ClientControlPolicy policy)
+        public void SetPolicy(ClientControlPolicy policy)
         {
-            if (_policies.TryAdd(policy.Tag, policy))
-            {
-                return null;
-            }
-            else if (_policies.TryRemove(policy.Tag, out var removed))
-            {
-                _policies.TryAdd(policy.Tag, policy);
-                return removed;
-            }
-            else
-            {
-                throw new InvalidOperationException($"Can't remove an existing key '{policy.Tag}'.");
-            }
+            _policies.Add(policy);
         }
     }
 }

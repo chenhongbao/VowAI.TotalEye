@@ -4,6 +4,6 @@ namespace VowAI.TotalEye.Client
 {
     public interface IClientControlPolicyProvider
     {
-        public ClientControlPolicy? GetPolicy(string tag);
+        public ClientControlPolicySet? GetPolicy(string tag);
     }
 }

@@ -9,9 +9,10 @@ namespace VowAI.TotalEye.Server.Models
         }
 
         public DbSet<User> Users { get; set; }
-        public DbSet<UserControlPolicy> Policies { get; set; }
+        public DbSet<ControlPolicy> Policies { get; set; }
         public DbSet<UserInfoSession> Sessions { get; set; }
-        public DbSet<ImageItem> Screenshots { get; set; }
-
+        public DbSet<UserScreenshot> Screenshots { get; set; }
+        public DbSet<UserCommandOutput> CommandOutputs { get; set; }
+        public DbSet<UserHttpLog> HttpLogs { get; set; }
     }
 }

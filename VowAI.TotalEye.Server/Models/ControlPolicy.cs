@@ -2,7 +2,7 @@
 
 namespace VowAI.TotalEye.Server.Models
 {
-    public class UserControlPolicy
+    public class ControlPolicy
     {
         public int PolicyId { get; set; }
         public int Description { get; set; }

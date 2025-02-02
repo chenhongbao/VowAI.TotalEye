@@ -1,10 +1,12 @@
-﻿namespace VowAI.TotalEye.ServerShared.Models
+﻿using System.Collections.Generic;
+
+namespace VowAI.TotalEye.ServerShared.Models
 {
     public class ClientControlPolicy
     {
         public int PolicyId { get; set; }
         public int Description { get; set; }
-        public string Tag { get; set; }
-        public ICollection<ClientControlPolicyItem> Policies { get; set; }
+        public string Tag { get; set; } = "";
+        public ICollection<ClientControlPolicyItem> Policies { get; set; } = new List<ClientControlPolicyItem>();
     }
 }

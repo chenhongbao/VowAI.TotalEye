@@ -5,8 +5,8 @@ namespace VowAI.TotalEye.Server.Controllers
 {
     public interface IPolicyExecutor
     {
-        public Task<ClientControlPolicy> ApplyHttpPolicy(string token, ClientHttpLogs logs);
-        public Task<ClientControlPolicy> ApplyScreenshotPolicy(string token, ImageItem image);
-        public Task<ClientControlPolicy> ApplyCommandPolicy(string token, string commandOutput);
+        public Task<ClientControlPolicySet> ApplyHttpPolicy(string token, ClientHttpLogs logs);
+        public Task<ClientControlPolicySet> ApplyScreenshotPolicy(string token, ImageItem image);
+        public Task<ClientControlPolicySet> ApplyCommandPolicy(string token, string commandOutput);
     }
 }

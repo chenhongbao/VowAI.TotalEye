@@ -1,9 +1,10 @@
-﻿using VowAI.TotalEye.ServerShared.Models;
+﻿using VowAI.TotalEye.ServerShared;
+using VowAI.TotalEye.ServerShared.Models;
 using VowAI.TotalEye.Tools;
 
 namespace VowAI.TotalEye.Client
 {
-    public class ConfiguredComputerSniffer: IConfiguredComputerSniffer
+    public class ConfiguredComputerSniffer : IConfiguredComputerSniffer
     {
         private readonly IClientControlPolicyProvider _policyProvider;
         private readonly TimeSpan _pollingTime = TimeSpan.FromSeconds(30);
@@ -30,11 +31,11 @@ namespace VowAI.TotalEye.Client
             {
                 try
                 {
-                    ClientControlPolicy? policy = _policyProvider.GetPolicy("local_computer");
+                    ClientControlPolicySet? policySet = _policyProvider.GetPolicy("local_computer");
 
-                    if (policy != null)
+                    if (policySet != null)
                     {
-                        ApplyPolicy(policy);
+                        ApplyPolicy(policySet);
                     }
                 }
                 catch (Exception exception)
@@ -53,13 +54,13 @@ namespace VowAI.TotalEye.Client
             }
         }
 
-        private void ApplyPolicy(ClientControlPolicy policy)
+        private void ApplyPolicy(ClientControlPolicySet policySet)
         {
-            if (policy.Policies != null && policy.Policies.Any())
+            if (policySet.Policies.Any())
             {
                 string[] processes = LocalComputer.RunCommand("tasklist /FO Table /NH").Split('\n');
 
-                foreach (ClientControlPolicyItem item in policy.Policies)
+                foreach (ClientControlPolicyItem item in policySet.GetPolicyItems())
                 {
                     ApplyPolicyItem(item, processes);
                 }
@@ -90,7 +91,7 @@ namespace VowAI.TotalEye.Client
 
         private void ApplyProcessAction(ClientControlPolicyItem item, string pid)
         {
-            switch(item.Action.ToLower())
+            switch (item.Action.ToLower())
             {
                 case "client_taskkill":
 

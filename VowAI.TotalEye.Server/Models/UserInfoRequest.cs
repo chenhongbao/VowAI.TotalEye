@@ -7,5 +7,6 @@
         public string? Description { get; set; }
         public string? Token { get; set; }
         public string? ReplyUrl { get; set; }
+        public User? User { get; set; }
     }
 }

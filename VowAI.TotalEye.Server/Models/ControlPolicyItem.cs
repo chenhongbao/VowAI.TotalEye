@@ -1,6 +1,6 @@
 ﻿namespace VowAI.TotalEye.Server.Models
 {
-    public class UserPolicyItem
+    public class ControlPolicyItem
     {
         public int ItemId { get; set; }
         public string? FilterWords { get; set; }

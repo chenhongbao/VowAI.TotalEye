@@ -17,7 +17,7 @@ namespace VowAI.TotalEye.Server.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ClientControlPolicy>> Post([FromForm] string token, IFormFile payload)
+        public async Task<ActionResult<ClientControlPolicySet>> Post([FromForm] string token, IFormFile payload)
         {
             try
             {

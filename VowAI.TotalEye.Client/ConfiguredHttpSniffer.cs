@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using Titanium.Web.Proxy.EventArguments;
+using VowAI.TotalEye.ServerShared;
 using VowAI.TotalEye.ServerShared.Models;
 using VowAI.TotalEye.Tools;
 
@@ -28,7 +29,7 @@ namespace VowAI.TotalEye.Client
         public ClientHttpLogs ReadHttpLogs()
         {
             DirectoryInfo directory = LocalComputer.GetApplicationDirectory<ConfiguredHttpSniffer>();
-            string path = Path.Combine(directory.FullName, LOG_FILE);        
+            string path = Path.Combine(directory.FullName, LOG_FILE);
             ClientHttpLogs logs = ReadHttpLogsFile(path);
 
             File.WriteAllText(path, "");
@@ -38,21 +39,21 @@ namespace VowAI.TotalEye.Client
 
         private void OnTunnelConnect(TunnelConnectSessionEventArgs args)
         {
-            ClientControlPolicy? policy = _policyProvider.GetPolicy("http_connect");
+            ClientControlPolicySet? policySet = _policyProvider.GetPolicy("http_connect");
 
-            if (policy != null)
+            if (policySet != null)
             {
-                ApplyConnectPolicy(args, policy);
+                ApplyConnectPolicy(args, policySet);
             }
         }
 
         private void OnRequest(SessionEventArgs args)
         {
-            ClientControlPolicy? policy = _policyProvider.GetPolicy("http_request");
+            ClientControlPolicySet? policySet = _policyProvider.GetPolicy("http_request");
 
-            if (policy != null)
+            if (policySet != null)
             {
-                ApplySessionPolicy(args, policy);
+                ApplySessionPolicy(args, policySet);
             }
         }
 
@@ -60,11 +61,11 @@ namespace VowAI.TotalEye.Client
         {
             WriteHttpLog(args);
 
-            ClientControlPolicy? policy = _policyProvider.GetPolicy("http_response");
+            ClientControlPolicySet? policySet = _policyProvider.GetPolicy("http_response");
 
-            if (policy != null)
+            if (policySet != null)
             {
-                ApplySessionPolicy(args, policy);
+                ApplySessionPolicy(args, policySet);
             }
         }
 
@@ -94,15 +95,15 @@ namespace VowAI.TotalEye.Client
             return $"{DateTime.Now}\t{args.HttpClient.Request.Method}\t{args.HttpClient.Request.RequestUri.Host}";
         }
 
-        private void ApplyConnectPolicy(TunnelConnectSessionEventArgs args, ClientControlPolicy policy)
+        private void ApplyConnectPolicy(TunnelConnectSessionEventArgs args, ClientControlPolicySet policySet)
         {
-            if (policy.Policies != null && policy.Policies.Any())
+            if (policySet.Policies.Any())
             {
-                string hostname = args.HttpClient.Request.RequestUri.Host;
+                string hostName = args.HttpClient.Request.RequestUri.Host;
 
-                foreach (ClientControlPolicyItem policyItem in policy.Policies)
+                foreach (ClientControlPolicyItem policyItem in policySet.GetPolicyItems())
                 {
-                    if (policyItem.FilterWords.Split([';', ',']).Any(word => ApplyCondition(policyItem.FilterCondition, hostname, word)))
+                    if (policyItem.FilterWords.Split([';', ',']).Any(word => ApplyCondition(policyItem.FilterCondition, hostName, word)))
                     {
                         ApplyConnectAction(args, policyItem.Action, policyItem.ActionDescription);
                         break;
@@ -111,13 +112,13 @@ namespace VowAI.TotalEye.Client
             }
         }
 
-        private void ApplySessionPolicy(SessionEventArgs args, ClientControlPolicy policy)
+        private void ApplySessionPolicy(SessionEventArgs args, ClientControlPolicySet policySet)
         {
-            if (policy.Policies != null && policy.Policies.Any())
+            if (policySet.Policies != null && policySet.Policies.Any())
             {
                 string hostname = args.HttpClient.Request.RequestUri.Host;
 
-                foreach (ClientControlPolicyItem policyItem in policy.Policies)
+                foreach (ClientControlPolicyItem policyItem in policySet.GetPolicyItems())
                 {
                     if (policyItem.FilterWords.Split([';', ',']).Any(word => ApplyCondition(policyItem.FilterCondition, hostname, word)))
                     {
