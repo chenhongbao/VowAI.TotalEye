@@ -6,6 +6,5 @@
         public string GetInfoRequestUrl { get; }
         public int UserId { get; }
         public string Password { get; }
-        public string Pin { get; }
     }
 }

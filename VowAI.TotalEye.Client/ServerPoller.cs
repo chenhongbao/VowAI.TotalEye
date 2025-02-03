@@ -97,14 +97,7 @@ namespace VowAI.TotalEye.Client
 
         private async Task<ClientInfoRequest?> Ask(HttpClient client)
         {
-            HttpResponseMessage response = await client.PostAsJsonAsync(_configuration.GetInfoRequestUrl, new ClientUser { UserId = _configuration.UserId, Pin = _configuration.Pin });
-
-            if (response.IsSuccessStatusCode == false)
-            {
-                throw new InvalidOperationException($"Fail to read from centre: HTTP {response.StatusCode}.");
-            }
-
-            return await response.Content.ReadFromJsonAsync<ClientInfoRequest>();
+            return await client.GetFromJsonAsync<ClientInfoRequest>(_configuration.GetInfoRequestUrl + "?userId=" + _configuration.UserId);
         }
 
         private async Task<ClientControlPolicySet?> Reply(HttpClient client, ClientInfoRequest request)
@@ -135,7 +128,7 @@ namespace VowAI.TotalEye.Client
 
         private async Task<ClientControlPolicySet?> GetControlPolicySet(HttpClient client, ClientInfoRequest request)
         {
-            string url = request.ReplyUrl + "?userId=" + _configuration.UserId + "&pin=" + _configuration.Pin;
+            string url = request.ReplyUrl + "?userId=" + _configuration.UserId + "&token=" + request.Token;
 
             return await client.GetFromJsonAsync<ClientControlPolicySet>(url);
         }

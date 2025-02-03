@@ -17,7 +17,6 @@ namespace VowAI.TotalEye.Client
                     config.GetInfoRequestUrl = loaded.GetInfoRequestUrl;
                     config.UserId = loaded.UserId;
                     config.Password = loaded.Password;
-                    config.Pin = loaded.Pin;
 
                 }, (config) =>
                 {
@@ -25,7 +24,6 @@ namespace VowAI.TotalEye.Client
                     config.GetInfoRequestUrl = "http://plusai.site/GetInfoRequest";
                     config.UserId = 0;
                     config.Password = "";
-                    config.Pin = "";
                 }));
 
             builder.Services.AddSingleton<IHttpSnifferConfiguration>(
