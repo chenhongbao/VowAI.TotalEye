@@ -20,7 +20,7 @@ namespace VowAI.TotalEye.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ClientInfoRequest>> Get(int userId, string pin)
+        public async Task<ActionResult<ClientInfoRequest>> Get(int userId)
         {
             try
             {
@@ -62,7 +62,12 @@ namespace VowAI.TotalEye.Server.Controllers
                         }
 
                         user.Sessions.Add(storedSession);
-                        context.Entry(user).State = EntityState.Modified;
+                        context.Entry(user.Sessions).State = EntityState.Modified;
+
+                        await context.SaveChangesAsync();
+
+                        request.Status = "replying";
+                        context.Entry(request).State = EntityState.Modified;
 
                         await context.SaveChangesAsync();
 

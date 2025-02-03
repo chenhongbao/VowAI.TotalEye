@@ -32,8 +32,13 @@ namespace VowAI.TotalEye.Server.Controllers
                     }
                     else
                     {
-                        user.Policies?.Add(policy);
-                        context.Entry(user).State = EntityState.Modified;
+                        if (user.Policies == null)
+                        {
+                            user.Policies = new List<ControlPolicy>();
+                        }
+
+                        user.Policies.Add(policy);
+                        context.Entry(user.Policies).State = EntityState.Modified;
 
                         await context.SaveChangesAsync();
 

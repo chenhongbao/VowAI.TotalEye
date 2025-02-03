@@ -32,11 +32,36 @@ namespace VowAI.TotalEye.Server.Controllers
                     }
                     else
                     {
+                        string replyUrl = "";
+
+                        switch (request.Name.ToLower())
+                        {
+                            case "client_screenshot":
+
+                                replyUrl = PostScreenshotController.GetControllerUrl();
+                                break;
+
+                            case "client_command":
+
+                                replyUrl = PostCommandOutputController.GetControllerUrl();
+                                break;
+
+                            case "http_logs":
+
+                                replyUrl = PostHttpLogsController.GetControllerUrl();
+                                break;
+
+                            case "":
+
+                                replyUrl = GetControlPolicyController.GetControllerUrl(user.UserId, user.Pin);
+                                break;
+                        }
+
                         UserInfoRequest userRequest = new UserInfoRequest()
                         {
                             Name = request.Name,
                             Description = request.Description,
-                            ReplyUrl = request.ReplyUrl,
+                            ReplyUrl = replyUrl,
                             Status = "pending",
                             User = user,
                         };
@@ -57,7 +82,7 @@ namespace VowAI.TotalEye.Server.Controllers
                         }
 
                         user.Requests.Add(storedRequest);
-                        context.Entry(user).State = EntityState.Modified;
+                        context.Entry(user.Requests).State = EntityState.Modified;
 
                         await context.SaveChangesAsync();
 

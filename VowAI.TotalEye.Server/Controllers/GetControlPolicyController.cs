@@ -18,7 +18,7 @@ namespace VowAI.TotalEye.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ClientControlPolicySet>> Get(int userId, string pin)
+        public async Task<ActionResult<ClientControlPolicySet>> Get(int userId, string token)
         {
             try
             {
@@ -34,6 +34,25 @@ namespace VowAI.TotalEye.Server.Controllers
                     }
                     else
                     {
+                        UserInfoSession? session = await context.Sessions
+                            .Include(s => s.Request)
+                            .FirstOrDefaultAsync<UserInfoSession>(session => session.Token == token);
+
+                        if (session == null)
+                        {
+                            throw new ArgumentException($"Unknown token '{token}'.");
+                        }
+
+                        if (session.Request == null)
+                        {
+                            throw new ArgumentException($"Session with token '{token}' has no request.");
+                        }
+
+                        session.Request.Status = "filled";
+                        context.Entry(session.Request).State = EntityState.Modified;
+
+                        await context.SaveChangesAsync();
+
                         return Ok(user.GetPolicySet());
                     }
                 }
@@ -48,6 +67,11 @@ namespace VowAI.TotalEye.Server.Controllers
         public static string GetControllerName()
         {
             return nameof(GetControlPolicyController).Replace("Controller", "");
+        }
+
+        public static string GetControllerUrl(int? userId, string? pin)
+        {
+            return "api/" + GetControlPolicyController.GetControllerName() + "?userId=" + userId + "&pin=" + pin;
         }
     }
 }

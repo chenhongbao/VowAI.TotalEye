@@ -17,6 +17,16 @@ namespace VowAI.TotalEye.Server.Controllers
             _dbFactory = dbFactory;
         }
 
+        public static string GetControllerName()
+        {
+            return nameof(PostCommandOutputController).Replace("Controller", "");
+        }
+
+        public static string GetControllerUrl()
+        {
+            return $"api/{GetControllerName()}";
+        }
+
         [HttpPost]
         public async Task<ActionResult<ClientControlPolicySet>> Post([FromForm] string token, [FromForm] string payload)
         {
@@ -50,11 +60,13 @@ namespace VowAI.TotalEye.Server.Controllers
                             .FirstOrDefaultAsync<SessionCommandOutput>(cmd => cmd.Session == null ? false : cmd.Session.SessionId == session.SessionId);
 
                         session.CommandOutput = storedCmd;
+                        context.Entry(session).State = EntityState.Modified;
+
                         await context.SaveChangesAsync();
 
                         if (session.Request?.User != null)
                         {
-                            return Redirect(GetControlPolicyController.GetControllerName() + "?userId=" + session.Request.User.UserId + "&pin=" + session.Request.User.Pin);
+                            return Redirect(GetControlPolicyController.GetControllerUrl(session.Request.User.UserId, session.Request.User.Pin));
                         }
                         else
                         {
@@ -65,7 +77,7 @@ namespace VowAI.TotalEye.Server.Controllers
             }
             catch (Exception exception)
             {
-                exception.WriteString<PostImageController>();
+                exception.WriteString<PostScreenshotController>();
                 return BadRequest(exception);
             }
         }

@@ -7,7 +7,7 @@ using VowAI.TotalEye.Tools;
 namespace VowAI.TotalEye.Server.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class PostHttpLogsController : ControllerBase
     {
         private readonly IDbContextFactory<ServerDbContext> _dbFactory;
@@ -15,6 +15,16 @@ namespace VowAI.TotalEye.Server.Controllers
         public PostHttpLogsController(IDbContextFactory<ServerDbContext> dbFactory)
         {
             _dbFactory = dbFactory;
+        }
+
+        public static string GetControllerName()
+        {
+            return nameof(PostHttpLogsController).Replace("Controller", "");
+        }
+
+        public static string GetControllerUrl()
+        {
+            return $"api/{GetControllerName()}";
         }
 
         [HttpPost]
@@ -50,11 +60,13 @@ namespace VowAI.TotalEye.Server.Controllers
                             .FirstOrDefaultAsync<SessionHttpLog>(cmd => cmd.Session == null ? false : cmd.Session.SessionId == session.SessionId);
 
                         session.HttpLogs = storedLogs;
+                        context.Entry(session).State = EntityState.Modified;
+
                         await context.SaveChangesAsync();
 
                         if (session.Request?.User != null)
                         {
-                            return Redirect(GetControlPolicyController.GetControllerName() + "?userId=" + session.Request.User.UserId + "&pin=" + session.Request.User.Pin);
+                            return Redirect(GetControlPolicyController.GetControllerUrl(session.Request.User.UserId, session.Request.User.Pin));
                         }
                         else
                         {
