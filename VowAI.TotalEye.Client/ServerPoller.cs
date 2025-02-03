@@ -125,7 +125,7 @@ namespace VowAI.TotalEye.Client
 
                 case "":
 
-                    return await GetControlPolicySet();
+                    return await GetControlPolicySet(client, request);
 
                 default:
 
@@ -133,11 +133,11 @@ namespace VowAI.TotalEye.Client
             }
         }
 
-        private async Task<ClientControlPolicySet?> GetControlPolicySet()
+        private async Task<ClientControlPolicySet?> GetControlPolicySet(HttpClient client, ClientInfoRequest request)
         {
-            string url = _configuration.GetPolicyUrl + "?userId=" + _configuration.UserId + "&pin=" + _configuration.Pin;
+            string url = request.ReplyUrl + "?userId=" + _configuration.UserId + "&pin=" + _configuration.Pin;
 
-            return await _clientFactory.CreateClient().GetFromJsonAsync<ClientControlPolicySet>(url);
+            return await client.GetFromJsonAsync<ClientControlPolicySet>(url);
         }
 
         private async Task<ClientControlPolicySet?> UploadImageFromPath(HttpClient client, ClientInfoRequest request)
